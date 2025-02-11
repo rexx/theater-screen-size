@@ -5,14 +5,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const screenList = document.getElementById('screen-list');
 
     screens.forEach((screen, index) => {
+        if (screen.width === 0 || screen.height === 0) return;
+
         const screenBox = document.createElement('div');
         screenBox.className = 'screen-box';
         screenBox.id = `screen-box-${index + 1}`;
+        screenBox.style.display = screen.isOld ? 'none' : 'block';
         screenContainer.appendChild(screenBox);
         screen.element = screenBox;
 
         const listItem = document.createElement('div');
-        listItem.className = 'screen-list-item showing';
+        listItem.className = `screen-list-item ${screen.isOld ? 'hiding' : 'showing'}`;
         listItem.textContent = screen.name;
         listItem.addEventListener('click', () => {
             const isShowing = screen.element.style.display !== 'none';
@@ -22,14 +25,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         listItem.addEventListener('mouseover', () => {
             screens.forEach(s => {
-                if (s !== screen) {
+                if (s !== screen && s.element) {
                     s.element.style.opacity = '0.2';
                 }
             });
         });
         listItem.addEventListener('mouseout', () => {
             screens.forEach(s => {
-                s.element.style.opacity = '1';
+                if (s.element) {
+                    s.element.style.opacity = '1';
+                }
             });
         });
         screenList.appendChild(listItem);
@@ -37,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function recalculateScreenSizes() {
-        const visibleScreens = screens.filter(screen => screen.element.style.display !== 'none');
+        const visibleScreens = screens.filter(screen => screen.element && screen.element.style.display !== 'none');
         const maxScreen = visibleScreens.reduce((max, screen) => {
             const screenArea = screen.width * screen.height;
             return screenArea > max.width * max.height ? screen : max;
@@ -77,8 +82,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Show all screens
     document.getElementById('show-all').addEventListener('click', () => {
         screens.forEach(screen => {
-            screen.element.style.display = 'block';
-            screen.listItem.className = 'screen-list-item showing';
+            if (screen.width !== 0 && screen.height !== 0) {
+                screen.element.style.display = 'block';
+                screen.listItem.className = 'screen-list-item showing';
+            }
         });
         recalculateScreenSizes();
     });
@@ -86,8 +93,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Hide all screens
     document.getElementById('hide-all').addEventListener('click', () => {
         screens.forEach(screen => {
-            screen.element.style.display = 'none';
-            screen.listItem.className = 'screen-list-item hiding';
+            if (screen.width !== 0 && screen.height !== 0) {
+                screen.element.style.display = 'none';
+                screen.listItem.className = 'screen-list-item hiding';
+            }
         });
     });
 
