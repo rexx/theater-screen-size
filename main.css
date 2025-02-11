@@ -1,0 +1,62 @@
+body {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+    position: relative; /* Enable positioning of children */
+}
+
+#screen-container {
+    position: relative;
+    flex: 1;
+}
+
+#screen-list {
+    flex: 0 0 300px; /* Fixed width for the list */
+    height: 100vh;
+    overflow-y: auto;
+    background-color: #fff;
+    border-left: 1px solid #ccc;
+    padding: 10px;
+}
+
+.screen-box {
+    position: absolute; /* Overlap the boxes */
+    border: 2px solid #000;
+    display: flex;
+    justify-content: flex-end; /* Align text to the right */
+    align-items: flex-end; /* Align text to the bottom */
+    top: 0;
+    left: 0;
+    transition: opacity 0.3s, width 0.3s, height 0.3s; /* Smooth transition for opacity, width, and height */
+}
+
+.screen-text {
+    position: absolute; /* Position text absolutely within the box */
+    top: 0; /* Align text to the top */
+    left: 50%; /* Center text horizontally */
+    transform: translateX(-50%); /* Center text horizontally */
+    background-color: rgba(255, 255, 255, 0.8); /* Add a semi-transparent white background */
+    padding: 2px 4px; /* Add some padding */
+    border-radius: 4px; /* Add rounded corners */
+}
+
+.screen-list-item {
+    cursor: pointer;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.screen-list-item.showing {
+    background-color: #d4edda; /* Light green background for showing state */
+}
+
+.screen-list-item.hiding {
+    background-color: #f8d7da; /* Light red background for hiding state */
+}
+
+.screen-list-item:hover {
+    background-color: #cce5ff; /* Light blue background for hover state */
+}
