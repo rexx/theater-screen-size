@@ -18,6 +18,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const regionTitle = document.createElement('h2');
         regionTitle.textContent = region;
+
+        const toggleButton = document.createElement('div');
+        toggleButton.textContent = '🫣';
+        toggleButton.classList.add('toggle-button');
+        toggleButton.addEventListener('click', () => {
+            const isAnyScreenVisible = groupedScreens[region].some(screen => screen.element && screen.element.style.display !== 'none');
+            groupedScreens[region].forEach(screen => {
+                if (screen.width !== 0 && screen.height !== 0 && screen.element) {
+                    screen.element.style.display = isAnyScreenVisible ? 'none' : (screen.isOld ? 'none' : 'block');
+                    screen.listItem.className = `screen-list-item ${isAnyScreenVisible ? 'hiding' : (screen.isOld ? 'hiding' : 'showing')}`;
+                }
+            });
+            recalculateScreenSizes();
+        });
+
+        regionTitle.appendChild(toggleButton);
         regionSection.appendChild(regionTitle);
 
         groupedScreens[region].forEach((screen, index) => {
@@ -26,12 +42,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const screenBox = document.createElement('div');
             screenBox.className = 'screen-box';
             screenBox.id = `screen-box-${index + 1}`;
-            screenBox.style.display = screen.isOld ? 'none' : 'block';
+            screenBox.style.display = region === '大台北和宜蘭地區' && !screen.isOld ? 'block' : 'none';
             screenContainer.appendChild(screenBox);
             screen.element = screenBox;
 
             const listItem = document.createElement('div');
-            listItem.className = `screen-list-item ${screen.isOld ? 'hiding' : 'showing'}`;
+            listItem.className = `screen-list-item ${region === '大台北和宜蘭地區' && !screen.isOld ? 'showing' : 'hiding'}`;
             listItem.textContent = screen.name;
             listItem.addEventListener('click', () => {
                 const isShowing = screen.element.style.display !== 'none';
@@ -62,6 +78,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function recalculateScreenSizes() {
         const visibleScreens = screens.filter(screen => screen.element && screen.element.style.display !== 'none');
+        if (visibleScreens.length === 0) return;
+
         const maxScreen = visibleScreens.reduce((max, screen) => {
             const screenArea = screen.width * screen.height;
             return screenArea > max.width * max.height ? screen : max;
@@ -101,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Show all screens
     document.getElementById('show-all').addEventListener('click', () => {
         screens.forEach(screen => {
-            if (screen.width !== 0 && screen.height !== 0) {
+            if (screen.width !== 0 && screen.height !== 0 && !screen.isOld) {
                 screen.element.style.display = 'block';
                 screen.listItem.className = 'screen-list-item showing';
             }

@@ -60,3 +60,8 @@ body {
 .screen-list-item:hover {
     background-color: #cce5ff; /* Light blue background for hover state */
 }
+
+.toggle-button {
+    cursor: pointer;
+    float: right;
+}
