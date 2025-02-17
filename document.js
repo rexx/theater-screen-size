@@ -4,41 +4,60 @@ document.addEventListener('DOMContentLoaded', () => {
     const screenContainer = document.getElementById('screen-container');
     const screenList = document.getElementById('screen-list');
 
-    screens.forEach((screen, index) => {
-        if (screen.width === 0 || screen.height === 0) return;
+    const groupedScreens = screens.reduce((acc, screen) => {
+        if (!acc[screen.region]) {
+            acc[screen.region] = [];
+        }
+        acc[screen.region].push(screen);
+        return acc;
+    }, {});
 
-        const screenBox = document.createElement('div');
-        screenBox.className = 'screen-box';
-        screenBox.id = `screen-box-${index + 1}`;
-        screenBox.style.display = screen.isOld ? 'none' : 'block';
-        screenContainer.appendChild(screenBox);
-        screen.element = screenBox;
+    Object.keys(groupedScreens).forEach(region => {
+        const regionSection = document.createElement('div');
+        regionSection.classList.add('region-section');
 
-        const listItem = document.createElement('div');
-        listItem.className = `screen-list-item ${screen.isOld ? 'hiding' : 'showing'}`;
-        listItem.textContent = screen.name;
-        listItem.addEventListener('click', () => {
-            const isShowing = screen.element.style.display !== 'none';
-            screen.element.style.display = isShowing ? 'none' : 'block';
-            listItem.className = `screen-list-item ${isShowing ? 'hiding' : 'showing'}`;
-            recalculateScreenSizes();
-        });
-        listItem.addEventListener('mouseover', () => {
-            screens.forEach(s => {
-                if (s !== screen && s.element) {
-                    s.element.style.opacity = '0.2';
-                }
+        const regionTitle = document.createElement('h2');
+        regionTitle.textContent = region;
+        regionSection.appendChild(regionTitle);
+
+        groupedScreens[region].forEach((screen, index) => {
+            if (screen.width === 0 || screen.height === 0) return;
+
+            const screenBox = document.createElement('div');
+            screenBox.className = 'screen-box';
+            screenBox.id = `screen-box-${index + 1}`;
+            screenBox.style.display = screen.isOld ? 'none' : 'block';
+            screenContainer.appendChild(screenBox);
+            screen.element = screenBox;
+
+            const listItem = document.createElement('div');
+            listItem.className = `screen-list-item ${screen.isOld ? 'hiding' : 'showing'}`;
+            listItem.textContent = screen.name;
+            listItem.addEventListener('click', () => {
+                const isShowing = screen.element.style.display !== 'none';
+                screen.element.style.display = isShowing ? 'none' : 'block';
+                listItem.className = `screen-list-item ${isShowing ? 'hiding' : 'showing'}`;
+                recalculateScreenSizes();
             });
-        });
-        listItem.addEventListener('mouseout', () => {
-            screens.forEach(s => {
-                if (s.element) {
-                    s.element.style.opacity = '1';
-                }
+            listItem.addEventListener('mouseover', () => {
+                screens.forEach(s => {
+                    if (s !== screen && s.element) {
+                        s.element.style.opacity = '0.2';
+                    }
+                });
             });
+            listItem.addEventListener('mouseout', () => {
+                screens.forEach(s => {
+                    if (s.element) {
+                        s.element.style.opacity = '1';
+                    }
+                });
+            });
+            regionSection.appendChild(listItem);
+            screen.listItem = listItem;
         });
-        screenList.appendChild(listItem);
-        screen.listItem = listItem;
+
+        screenList.appendChild(regionSection);
     });
 
     function recalculateScreenSizes() {
