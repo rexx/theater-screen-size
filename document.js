@@ -138,4 +138,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     window.addEventListener('resize', recalculateScreenSizes);
+
+    // Reusable function to toggle footer visibility
+    function toggleFooter() {
+        const footer = document.getElementById('footer');
+        footer.classList.toggle('hidden');
+    }
+
+    // Info button functionality
+    document.getElementById('info-button').addEventListener('click', toggleFooter);
+
+    // Close button functionality
+    document.getElementById('close-footer').addEventListener('click', toggleFooter);
 });
