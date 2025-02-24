@@ -19,21 +19,34 @@ document.addEventListener('DOMContentLoaded', () => {
         const regionTitle = document.createElement('h2');
         regionTitle.textContent = region;
 
-        const toggleButton = document.createElement('div');
-        toggleButton.textContent = '🫣';
-        toggleButton.classList.add('toggle-button');
-        toggleButton.addEventListener('click', () => {
-            const isAnyScreenVisible = groupedScreens[region].some(screen => screen.element && screen.element.style.display !== 'none');
+        const showButton = document.createElement('i');
+        showButton.className = 'fa-solid fa-eye toggle-button';
+        showButton.addEventListener('click', () => {
             groupedScreens[region].forEach(screen => {
                 if (screen.width !== 0 && screen.height !== 0 && screen.element) {
-                    screen.element.style.display = isAnyScreenVisible ? 'none' : (screen.isOld ? 'none' : 'block');
-                    screen.listItem.className = `screen-list-item ${isAnyScreenVisible ? 'hiding' : (screen.isOld ? 'hiding' : 'showing')}`;
+                    screen.element.style.display = 'block';
+                    screen.listItem.className = `screen-list-item ${screen.isOld ? 'hiding' : 'showing'}`;
+                    screen.listItem.querySelector('i').className = 'fa-solid fa-eye';
+                }
+            });
+            recalculateScreenSizes();
+        });
+        
+        const hideButton = document.createElement('i');
+        hideButton.className = 'fa-solid fa-eye-slash toggle-button';
+        hideButton.addEventListener('click', () => {
+            groupedScreens[region].forEach(screen => {
+                if (screen.width !== 0 && screen.height !== 0 && screen.element) {
+                    screen.element.style.display = 'none';
+                    screen.listItem.className = 'screen-list-item hiding';
+                    screen.listItem.querySelector('i').className = 'fa-solid fa-eye-slash';
                 }
             });
             recalculateScreenSizes();
         });
 
-        regionTitle.appendChild(toggleButton);
+        regionTitle.appendChild(showButton);
+        regionTitle.appendChild(hideButton);
         regionSection.appendChild(regionTitle);
 
         groupedScreens[region].forEach((screen, index) => {
@@ -49,10 +62,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const listItem = document.createElement('div');
             listItem.className = `screen-list-item ${region === '大台北和宜蘭地區' && !screen.isOld ? 'showing' : 'hiding'}`;
             listItem.textContent = screen.name;
+
+            const eyeIcon = document.createElement('i');
+            eyeIcon.className = `fa-solid ${region === '大台北和宜蘭地區' && !screen.isOld ? 'fa-eye' : 'fa-eye-slash'}`;
+            eyeIcon.style.marginLeft = '10px';
+            eyeIcon.style.float = 'right';
+            listItem.appendChild(eyeIcon);
+
             listItem.addEventListener('click', () => {
                 const isShowing = screen.element.style.display !== 'none';
                 screen.element.style.display = isShowing ? 'none' : 'block';
                 listItem.className = `screen-list-item ${isShowing ? 'hiding' : 'showing'}`;
+                eyeIcon.className = `fa-solid ${isShowing ? 'fa-eye-slash' : 'fa-eye'}`;
                 recalculateScreenSizes();
             });
             listItem.addEventListener('mouseover', () => {
@@ -115,27 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     recalculateScreenSizes();
-
-    // Show all screens
-    document.getElementById('show-all').addEventListener('click', () => {
-        screens.forEach(screen => {
-            if (screen.width !== 0 && screen.height !== 0 && !screen.isOld) {
-                screen.element.style.display = 'block';
-                screen.listItem.className = 'screen-list-item showing';
-            }
-        });
-        recalculateScreenSizes();
-    });
-
-    // Hide all screens
-    document.getElementById('hide-all').addEventListener('click', () => {
-        screens.forEach(screen => {
-            if (screen.width !== 0 && screen.height !== 0) {
-                screen.element.style.display = 'none';
-                screen.listItem.className = 'screen-list-item hiding';
-            }
-        });
-    });
 
     window.addEventListener('resize', recalculateScreenSizes);
 
