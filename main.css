@@ -74,6 +74,7 @@ body {
     border: none;
     font-size: 1.5em;
     cursor: pointer;
+    z-index: 1001;
 }
 
 footer {
@@ -109,6 +110,22 @@ footer {
 
 .hidden {
     display: none;
+}
+
+.region-section h2 {
+    cursor: pointer;
+}
+
+.region-section .toggle-button {
+    margin-left: 10px; /* Add spacing between show and hide buttons */
+}
+
+.region-section .caret {
+    transition: transform 0.3s; /* Smooth transition for rotation */
+}
+
+.region-section.collapsed .caret {
+    transform: rotate(-90deg); /* Rotate caret when collapsed */
 }
 
 @media (max-width: 768px) and (orientation: portrait) {

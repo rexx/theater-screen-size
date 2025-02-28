@@ -15,17 +15,40 @@ document.addEventListener('DOMContentLoaded', () => {
     Object.keys(groupedScreens).forEach(region => {
         const regionSection = document.createElement('div');
         regionSection.classList.add('region-section');
+        if (region !== '大台北和宜蘭地區') {
+            regionSection.classList.add('collapsed');
+        }
+
+        const regionTitleContainer = document.createElement('div');
+        regionTitleContainer.style.display = 'flex';
+        regionTitleContainer.style.alignItems = 'center';
+        regionTitleContainer.style.justifyContent = 'space-between';
+
+        const leftContainer = document.createElement('div');
+        leftContainer.style.display = 'flex';
+        leftContainer.style.alignItems = 'center';
+
+        const caret = document.createElement('i');
+        caret.className = 'fa-solid fa-caret-down caret';
+        leftContainer.appendChild(caret);
 
         const regionTitle = document.createElement('h2');
         regionTitle.textContent = region;
+        regionTitle.style.marginLeft = '10px';
+        leftContainer.appendChild(regionTitle);
+
+        const buttonContainer = document.createElement('div');
+        buttonContainer.style.display = 'flex';
+        buttonContainer.style.alignItems = 'center';
 
         const showButton = document.createElement('i');
         showButton.className = 'fa-solid fa-eye toggle-button';
-        showButton.addEventListener('click', () => {
+        showButton.addEventListener('click', (event) => {
+            event.stopPropagation();
             groupedScreens[region].forEach(screen => {
-                if (screen.width !== 0 && screen.height !== 0 && screen.element) {
+                if (screen.width !== 0 && screen.height !== 0 && screen.element && !screen.isOld) {
                     screen.element.style.display = 'block';
-                    screen.listItem.className = `screen-list-item ${screen.isOld ? 'hiding' : 'showing'}`;
+                    screen.listItem.className = `screen-list-item showing`;
                     screen.listItem.querySelector('i').className = 'fa-solid fa-eye';
                 }
             });
@@ -34,7 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const hideButton = document.createElement('i');
         hideButton.className = 'fa-solid fa-eye-slash toggle-button';
-        hideButton.addEventListener('click', () => {
+        hideButton.addEventListener('click', (event) => {
+            event.stopPropagation();
             groupedScreens[region].forEach(screen => {
                 if (screen.width !== 0 && screen.height !== 0 && screen.element) {
                     screen.element.style.display = 'none';
@@ -45,9 +69,22 @@ document.addEventListener('DOMContentLoaded', () => {
             recalculateScreenSizes();
         });
 
-        regionTitle.appendChild(showButton);
-        regionTitle.appendChild(hideButton);
-        regionSection.appendChild(regionTitle);
+        buttonContainer.appendChild(showButton);
+        buttonContainer.appendChild(hideButton);
+
+        regionTitleContainer.appendChild(leftContainer);
+        regionTitleContainer.appendChild(buttonContainer);
+        regionSection.appendChild(regionTitleContainer);
+
+        regionTitleContainer.addEventListener('click', () => {
+            const isCollapsed = regionSection.classList.toggle('collapsed');
+            const displayStyle = isCollapsed ? 'none' : 'block';
+            groupedScreens[region].forEach(screen => {
+                if (screen.listItem) {
+                    screen.listItem.style.display = displayStyle;
+                }
+            });
+        });
 
         groupedScreens[region].forEach((screen, index) => {
             if (screen.width === 0 || screen.height === 0) return;
@@ -90,6 +127,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
             });
+
+            if (region !== '大台北和宜蘭地區') {
+                listItem.style.display = 'none';
+            }
+
             regionSection.appendChild(listItem);
             screen.listItem = listItem;
         });
