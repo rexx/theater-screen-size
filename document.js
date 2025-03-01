@@ -106,26 +106,33 @@ document.addEventListener('DOMContentLoaded', () => {
             eyeIcon.style.float = 'right';
             listItem.appendChild(eyeIcon);
 
-            listItem.addEventListener('click', () => {
+            eyeIcon.addEventListener('click', (event) => {
+                event.stopPropagation();
                 const isShowing = screen.element.style.display !== 'none';
                 screen.element.style.display = isShowing ? 'none' : 'block';
                 listItem.className = `screen-list-item ${isShowing ? 'hiding' : 'showing'}`;
                 eyeIcon.className = `fa-solid ${isShowing ? 'fa-eye-slash' : 'fa-eye'}`;
                 recalculateScreenSizes();
             });
-            listItem.addEventListener('mouseover', () => {
-                screens.forEach(s => {
-                    if (s !== screen && s.element) {
-                        s.element.style.opacity = '0.2';
-                    }
-                });
-            });
-            listItem.addEventListener('mouseout', () => {
-                screens.forEach(s => {
-                    if (s.element) {
-                        s.element.style.opacity = '1';
-                    }
-                });
+
+            listItem.addEventListener('click', () => {
+                if (screen.element.style.display === 'none') return; // Prevent highlighting hidden screens
+                if (listItem.classList.contains('highlighted')) {
+                    listItem.classList.remove('highlighted');
+                    screens.forEach(s => {
+                        if (s.element) {
+                            s.element.style.opacity = '1';
+                        }
+                    });
+                } else {
+                    document.querySelectorAll('.screen-list-item').forEach(item => item.classList.remove('highlighted'));
+                    listItem.classList.add('highlighted');
+                    screens.forEach(s => {
+                        if (s.element) {
+                            s.element.style.opacity = s === screen ? '1' : '0.2';
+                        }
+                    });
+                }
             });
 
             if (region !== '大台北和宜蘭地區') {

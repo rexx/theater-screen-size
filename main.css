@@ -47,18 +47,24 @@ body {
     cursor: pointer;
     padding: 10px;
     border-bottom: 1px solid #ccc;
+    opacity: 0.3; /* Default to half-transparent */
 }
 
 .screen-list-item.showing {
-    background-color: #d4edda; /* Light green background for showing state */
+    opacity: 1; /* Fully opaque when showing */
 }
 
 .screen-list-item.hiding {
-    background-color: #f8d7da; /* Light red background for hiding state */
+    opacity: 0.3; /* Half-transparent when hiding */
 }
 
 .screen-list-item:hover {
     background-color: #cce5ff; /* Light blue background for hover state */
+}
+
+.screen-list-item.highlighted {
+    background-color: #007bff; /* Blue background for highlighted state */
+    color: white; /* White text for highlighted state */
 }
 
 .toggle-button {
