@@ -11,6 +11,7 @@ body {
 #screen-container {
     position: relative;
     flex: 1;
+    height: 100vh;
 }
 
 #screen-list {

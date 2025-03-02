@@ -4,6 +4,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const screenContainer = document.getElementById('screen-container');
     const screenList = document.getElementById('screen-list');
 
+    function adjustHeights() {
+        if (window.matchMedia("(max-width: 768px) and (orientation: portrait)").matches) {
+            const availableHeight = window.innerHeight;
+            const halfHeight = availableHeight / 2;
+            screenContainer.style.height = `${halfHeight}px`;
+            screenList.style.height = `${halfHeight}px`;
+        } else {
+            screenContainer.style.height = '100vh';
+            screenList.style.height = 'calc(100vh - 20px)';
+        }
+    }
+
+    adjustHeights();
+    window.addEventListener('resize', adjustHeights);
+
     const groupedScreens = screens.reduce((acc, screen) => {
         if (!acc[screen.region]) {
             acc[screen.region] = [];
@@ -156,8 +171,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }, visibleScreens[0]);
 
         const screenContainerWidth = document.getElementById('screen-container').clientWidth;
+        const screenContainerHeight = document.getElementById('screen-container').clientHeight;
         const scaleFactorWidth = screenContainerWidth / (maxScreen.width * 10);
-        const scaleFactorHeight = window.innerHeight / (maxScreen.height * 10);
+        const scaleFactorHeight = screenContainerHeight / (maxScreen.height * 10);
         const scaleFactor = Math.min(scaleFactorWidth, scaleFactorHeight) * 0.9;
         const borderWidth = 2; // Border width in pixels
 
