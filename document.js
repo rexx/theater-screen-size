@@ -60,6 +60,12 @@ document.addEventListener('DOMContentLoaded', () => {
         showButton.className = 'fa-solid fa-eye toggle-button';
         showButton.addEventListener('click', (event) => {
             event.stopPropagation();
+            document.querySelectorAll('.screen-list-item').forEach(item => item.classList.remove('highlighted')); // Reset highlight
+            screens.forEach(screen => {
+                if (screen.element) {
+                    screen.element.style.opacity = '1'; // Reset screen box opacity
+                }
+            });
             groupedScreens[region].forEach(screen => {
                 if (screen.width !== 0 && screen.height !== 0 && screen.element && !screen.isOld) {
                     screen.element.style.display = 'block';
@@ -74,6 +80,12 @@ document.addEventListener('DOMContentLoaded', () => {
         hideButton.className = 'fa-solid fa-eye-slash toggle-button';
         hideButton.addEventListener('click', (event) => {
             event.stopPropagation();
+            document.querySelectorAll('.screen-list-item').forEach(item => item.classList.remove('highlighted')); // Reset highlight
+            screens.forEach(screen => {
+                if (screen.element) {
+                    screen.element.style.opacity = '1'; // Reset screen box opacity
+                }
+            });
             groupedScreens[region].forEach(screen => {
                 if (screen.width !== 0 && screen.height !== 0 && screen.element) {
                     screen.element.style.display = 'none';
@@ -124,6 +136,14 @@ document.addEventListener('DOMContentLoaded', () => {
             eyeIcon.addEventListener('click', (event) => {
                 event.stopPropagation();
                 const isShowing = screen.element.style.display !== 'none';
+                if (listItem.classList.contains('highlighted')) {
+                    listItem.classList.remove('highlighted'); // Reset highlight if hiding highlighted item
+                    screens.forEach(s => {
+                        if (s.element) {
+                            s.element.style.opacity = '1'; // Reset screen box opacity
+                        }
+                    });
+                }
                 screen.element.style.display = isShowing ? 'none' : 'block';
                 listItem.className = `screen-list-item ${isShowing ? 'hiding' : 'showing'}`;
                 eyeIcon.className = `fa-solid ${isShowing ? 'fa-eye-slash' : 'fa-eye'}`;
